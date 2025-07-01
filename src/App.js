@@ -10,14 +10,7 @@ import { Textarea } from './components/ui/ui.js';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from './components/ui/ui.js';
 
 // Firebase 구성 정보
-const firebaseConfig = {
-  apiKey: "AIzaSyCaZJbCs8NXY5g4upnKmFTAE8BG_zGhsiE",
-  authDomain: "geulbiseo-proto-v1.firebaseapp.com",
-  projectId: "geulbiseo-proto-v1",
-  storageBucket: "geulbiseo-proto-v1.appspot.com",
-  messagingSenderId: "910381004727",
-  appId: "1:910381004727:web:8bd3e306f32b65fa081a32"
-};
+const firebaseConfig = { };
 
 const PersonaEditForm = ({ initialPersona, onSave, onCancel }) => {
     const [formData, setFormData] = useState(initialPersona);
