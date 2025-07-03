@@ -19,9 +19,9 @@
   },
 "scripts": {
   "start": "craco start",
-  "build": "craco build", // 이 부분이 중요!
+  "build": "craco build",
   "test": "craco test",
-  "eject": "react-scripts eject" // eject는 craco로 하지 않음
+  "eject": "react-scripts eject"
 },
   "eslintConfig": {
     "extends": [
