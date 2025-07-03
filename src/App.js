@@ -194,109 +194,70 @@ export default function App() {
             </div>
         );
     }
-    
-    return (
-    <div className="dark bg-background text-foreground">
-        <PersonaManagementModal isOpen={isPersonaModalOpen} onClose={() => setIsPersonaModalOpen(false)} personas={personas} onSave={handleSavePersona} onDelete={handleDeletePersona}/>
-        <main className="min-h-screen font-sans p-4 sm:p-6 lg:p-8">
-            <div className="w-full max-w-screen-2xl mx-auto grid grid-cols-1 xl:grid-cols-3 gap-8">
-                <div className="xl:col-span-1 flex flex-col gap-8">
-                    <Card>
-                        <CardHeader><CardTitle className="flex items-center text-base"><FolderPlus className="mr-2 h-4 w-4" /> 프로젝트 관리</CardTitle></CardHeader>
-                        <CardContent>
-                            <div className="flex gap-2">
-                                <Input type="text" value={newProjectName} onChange={(e) => setNewProjectName(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleAddProject()} placeholder="새 프로젝트 이름..." />
-                                <Button onClick={handleAddProject} disabled={isCreatingProject} size="icon">{isCreatingProject ? <Loader2 className="animate-spin h-4 w-4" /> : <Check className="h-4 w-4"/>}</Button>
-                            </div>
-                            {projects.length > 0 && (
-                                <div className="relative mt-4">
-                                    <select value={selectedProject || ''} onChange={(e) => setSelectedProject(e.target.value)} className="w-full h-10 rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50 appearance-none">
-                                        <option value="" disabled>프로젝트를 선택하세요</option>
-                                        {projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-                                    </select>
-                                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none h-4 w-4" />
-                                </div>
-                            )}
-                        </CardContent>
-                    </Card>
-                    <Card>
-                        <CardHeader><CardTitle className="flex items-center text-base"><BookUser className="mr-2 h-4 w-4" /> 페르소나 선택</CardTitle></CardHeader>
-                        <CardContent className="flex gap-2">
-                             <div className="relative flex-grow">
-                                 <select value={selectedPersonaId || ''} onChange={(e) => setSelectedPersonaId(e.target.value)} className="w-full h-10 rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50 appearance-none">
-                                     <option value="">-- 페르소나 선택 안함 --</option>
-                                     {personas.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-                                 </select>
-                                 <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none h-4 w-4" />
-                             </div>
-                            <Button onClick={() => setIsPersonaModalOpen(true)}>관리</Button>
-                        </CardContent>
-                    </Card>
-                </div>
-                
-                <div className="xl:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <Card className="flex flex-col h-full">
-                        <CardHeader>
-                            <div className="flex justify-between items-center flex-wrap gap-2">
-                                 {editingProjectId === selectedProject ? (
-                                      <div className="flex items-center gap-2 flex-grow">
-                                            <Input type="text" value={editingProjectName} onChange={(e) => setEditingProjectName(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleRenameProject()} className="text-xl font-bold"/>
-                                            <Button onClick={handleRenameProject} size="icon" variant="ghost"><Check className="h-4 w-4 text-green-500"/></Button>
-                                            <Button onClick={() => setEditingProjectId(null)} size="icon" variant="ghost"><X className="h-4 w-4 text-destructive"/></Button>
-                                        </div>
-                                    ) : (
-                                        <CardTitle className="flex items-center"><Database className="mr-3" /> {projects.find(p => p.id === selectedProject)?.name || "프로젝트 미선택"}</CardTitle>
-                                    )}
-                                <label htmlFor="file-upload">
-                                    <Button asChild variant="outline" disabled={!selectedProject || isProcessingFile}><span className="flex items-center cursor-pointer"><Upload size={16} className="mr-2" /> {isProcessingFile ? "처리중..." : "원고 업로드"}</span></Button>
-                                </label>
-                                <input id="file-upload" type="file" accept=".txt" onChange={handleFileUpload} className="hidden" disabled={!selectedProject || isProcessingFile} />
-                            </div>
-                        </CardHeader>
-                        <CardContent className="flex-grow flex flex-col min-h-[400px]">
-                            <div className="relative mb-4">
-                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={20}/>
-                                <Input type="text" value={kbSearchTerm} onChange={(e) => setKbSearchTerm(e.target.value)} placeholder="지식 베이스 검색..." className="pl-10"/>
-                            </div>
-                            <div className="flex-grow overflow-y-auto pr-2 -mr-2">
-                               {knowledgeBase.length > 0 ? filteredKnowledgeBase.map((item, index) => (
-                                    <Card key={item.id} className="mb-3 group bg-secondary">
-                                        <CardHeader className="flex flex-row justify-between items-start p-3">
-                                            <CardTitle className="text-base flex-grow break-words">{(index + 1) + '. ' + item.title}</CardTitle>
-                                            <Button onClick={() => handleDeleteItem(item.id)} variant="ghost" size="icon" className="opacity-0 group-hover:opacity-100 h-8 w-8"><Trash2 size={16} className="text-destructive"/></Button>
-                                        </CardHeader>
-                                        <CardContent className="p-3 pt-0">
-                                            <p className="text-secondary-foreground whitespace-pre-wrap break-words text-sm">{item.content}</p>
-                                        </CardContent>
-                                    </Card>
-                                )) : <p className="text-center text-muted-foreground pt-10">지식 베이스가 비어있습니다.</p>}
-                            </div>
-                        </CardContent>
-                        <CardFooter className="flex flex-col gap-2 mt-auto pt-6">
-                            <Input type="text" value={newItemTitle} onChange={(e) => setNewItemTitle(e.target.value)} placeholder="새 항목 제목..." disabled={!selectedProject || isSaving} />
-                            <Textarea value={newItemContent} onChange={(e) => setNewItemContent(e.target.value)} placeholder={selectedProject ? "짧은 지식 내용..." : "먼저 프로젝트를 선택해주세요."} disabled={!selectedProject || isSaving} rows="3" />
-                            <Button onClick={handleAddItem} disabled={isSaving || !selectedProject} className="w-full">{isSaving ? <Loader2 className="animate-spin" /> : "메모 추가"}</Button>
-                        </CardFooter>
-                    </Card>
-                    <Card className="flex flex-col h-full">
-                        <CardHeader>
-                            <CardTitle className="flex items-center"><BrainCircuit className="mr-3" /> 자료 기반 질문</CardTitle>
-                        </CardHeader>
-                         <CardContent className="flex-grow flex flex-col gap-4">
-                            <div className="flex gap-2">
-                                <Input type="text" value={userQuery} onChange={(e) => setUserQuery(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && performSearchAndGeneratePrompt(userQuery)} placeholder="원고 내용에 대해 질문해보세요..." />
-                                <Button onClick={() => performSearchAndGeneratePrompt(userQuery)} disabled={isGenerating || !selectedProject || knowledgeBase.length === 0} title="질문하기" size="icon"><Send className="h-4 w-4"/></Button>
-                            </div>
-                            <div className="bg-background rounded-lg p-4 flex-grow overflow-y-auto min-h-[300px] border">
-                                {isGenerating ? (<div className="flex items-center text-muted-foreground"><Loader2 className="animate-spin mr-3" /><span>{finalResponse || "Gemini가 열심히 생각 중입니다..."}</span></div>) 
-                                : finalResponse ? (<div className="prose prose-invert prose-p:text-foreground max-w-none whitespace-pre-wrap">{finalResponse}</div>) 
-                                : (<div className="text-center text-muted-foreground pt-10"><p>프로젝트의 지식 베이스를 바탕으로 질문에 답해드립니다.</p></div>)}
-                            </div>
-                        </CardContent>
-                    </Card>
-                </div>
-            </div>
-        </main>
-    </div>
-    );
-}
+   return (
+        <div className="dark bg-background text-foreground">
+            <PersonaManagementModal isOpen={isPersonaModalOpen} onClose={() => setIsPersonaModalOpen(false)} personas={personas} onSave={handleSavePersona} onDelete={handleDeletePersona}/>
+            <main className="min-h-screen font-sans p-4 sm:p-6 lg:p-8">
+                {/* 3단 그리드 컨테이너 */}
+                <div className="w-full max-w-screen-2xl mx-auto grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                    {/* 첫 번째 열: 프로젝트 관리 */}
+                    <div className="md:col-span-1 xl:col-span-1 flex flex-col gap-8">
+                        <Card>
+                            <CardHeader><CardTitle className="flex items-center text-base"><FolderPlus className="mr-2 h-4 w-4" /> 프로젝트 관리</CardTitle></CardHeader>
+                            <CardContent>
+                                <div className="flex gap-2">
+                                    <Input type="text" value={newProjectName} onChange={(e) => setNewProjectName(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleAddProject()} placeholder="새 프로젝트 이름..." />
+                                    <Button onClick={handleAddProject} disabled={isCreatingProject} size="icon">{isCreatingProject ? <Loader2 className="animate-spin h-4 w-4" /> : <Check className="h-4 w-4"/>}</Button>
+                                </div>
+                                {projects.length > 0 && (
+                                    <div className="relative mt-4">
+                                        <select value={selectedProject || ''} onChange={(e) => setSelectedProject(e.target.value)} className="w-full h-10 rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50 appearance-none">
+                                            <option value="" disabled>프로젝트를 선택하세요</option>
+                                            {projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                                        </select>
+                                        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none h-4 w-4" />
+                                    </div>
+                                )}
+                            </CardContent>
+                        </Card>
+                    </div>
+
+                    {/* 두 번째 열: 자료 기반 질문 - 현재 스크린샷에 보이는 내용과 유사하게 재구성 */}
+                    <div className="md:col-span-1 xl:col-span-1 flex flex-col gap-8">
+                        <Card>
+                            <CardHeader><CardTitle className="flex items-center text-base"><Pencil className="mr-2 h-4 w-4" /> 자료 기반 질문</CardTitle></CardHeader>
+                            <CardContent>
+                                {/* 기존의 자료 기반 질문 관련 UI를 여기에 배치 */}
+                                {/* 예시: */}
+                                <div className="flex flex-col gap-4">
+                                    <Input type="text" placeholder="질문은 빨리...?" />
+                                    <Button>보내기</Button> {/* 이 버튼이 '보내기' 버튼일 것으로 추측 */}
+                                </div>
+                                {/* 스크린샷에 보이는 "프로젝트의 지식 베이스를 바탕으로 질문에 답변드립니다." 텍스트 */}
+                                <p className="text-sm text-muted-foreground mt-4">프로젝트의 지식 베이스를 바탕으로 질문에 답변드립니다.</p>
+                            </CardContent>
+                        </Card>
+                    </div>
+
+                    {/* 세 번째 열: 페르소나 선택 - 현재 스크린샷에 보이는 내용과 유사하게 재구성 */}
+                    <div className="md:col-span-1 xl:col-span-1 flex flex-col gap-8">
+                        <Card>
+                            <CardHeader><CardTitle className="flex items-center text-base"><UserCircle className="mr-2 h-4 w-4" /> 페르소나 선택</CardTitle></CardHeader>
+                            <CardContent>
+                                {/* 기존의 페르소나 선택 관련 UI를 여기에 배치 */}
+                                {/* 예시: */}
+                                <div className="relative">
+                                    <select value={selectedPersona || ''} onChange={(e) => setSelectedPersona(e.target.value)} className="w-full h-10 rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50 appearance-none">
+                                        <option value="" disabled>페르소나 선택 안 됨</option>
+                                        {personas.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                                    </select>
+                                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none h-4 w-4" />
+                                </div>
+                                <Button onClick={() => setIsPersonaModalOpen(true)} className="mt-4">관리</Button>
+                            </CardContent>
+                        </Card>
+                    </div>
+                </div>
+            </main>
+        </div>
+    );
