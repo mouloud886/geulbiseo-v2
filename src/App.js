@@ -10,7 +10,12 @@ import { Textarea } from './components/ui/ui.js';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from './components/ui/ui.js';
 
 // Firebase 구성 정보
-const firebaseConfig = { };
+const firebaseConfig = {apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID };
 
 const PersonaEditForm = ({ initialPersona, onSave, onCancel }) => {
     const [formData, setFormData] = useState(initialPersona);
